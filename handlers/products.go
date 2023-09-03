@@ -22,9 +22,12 @@ func (p *Products) ServeHTTP(rw http.ResponseWriter, h *http.Request) {
 	// now listOfProducts contains the list of products, but how do we return that to the user
 	// we do that by converting listOfProducts into json. and this the the way
 
-	d, err := json.Marshal(listOfProducts)
+	// d, err := json.Marshal(listOfProducts)
+	// instead of Marshal we are using this better alternative
+
+	err := listOfProducts.ToJSON(rw) //ToJSON is in data/products
 	if err != nil {
 		http.Error(rw, "unable to convert data to json", http.StatusInternalServerError)
 	}
-	rw.Write(d)
+	// rw.Write(d) instead of Marshal we are using this better alternative
 }

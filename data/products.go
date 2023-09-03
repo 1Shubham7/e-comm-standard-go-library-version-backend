@@ -1,6 +1,10 @@
 package data
 
-import "time"
+import ( 
+	"time"
+	"encoding/json"
+	"io"
+)
 
 type Product struct {
 	// stuff encoded inside `` is called struct tags, they have a specific usecase
@@ -13,6 +17,15 @@ type Product struct {
 	UpdatedOn   string 		`json"-"`
 	DeletedOn   string 		`json"-"`
 }
+
+// instead of json.Marshal we want to use this method instead
+type Products []*Product
+
+func (p *Products) ToJSON(w io.Writer) error { //name of function is ToJSON and it returns an error
+	encoder := json.NewEncoder(w)
+	return encoder.Encode(p)
+}
+
 
 // we just created a data structure - Product
 // Let's now create a slice of Product
@@ -50,6 +63,6 @@ var productList = []*Product{
 // productList is a slice of pointers to Product structs. 
 
 // abstracting the products by a function
-func GetProducts() []*Product {
+func GetProducts() Products {
 	return productList
 }
