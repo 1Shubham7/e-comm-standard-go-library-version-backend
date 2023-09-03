@@ -3,17 +3,16 @@ package data
 import "time"
 
 type Product struct {
-	ID          int
-	Name        string
-	Description string
-	Price       float32
-	SKU         string
-	CreatedOn   string
-	UpdatedOn   string
-	DeletedOn   string
+	// stuff encoded inside `` is called struct tags, they have a specific usecase
+	ID          int 		`json:"id"` // now the ID is 'id' during the output, you can call it "hello" or anything
+	Name        string 		`json:"name"`
+	Description string 		`json:"description"`
+	Price       float32		`json:"price"`
+	SKU         string 		`json:"sku"`
+	CreatedOn   string 		`json"-"` // t	his will not output, we will use it internally
+	UpdatedOn   string 		`json"-"`
+	DeletedOn   string 		`json"-"`
 }
-
-
 
 // we just created a data structure - Product
 // Let's now create a slice of Product
@@ -49,8 +48,6 @@ var productList = []*Product{
 }
 
 // productList is a slice of pointers to Product structs. 
-
-
 
 // abstracting the products by a function
 func GetProducts() []*Product {
