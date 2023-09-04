@@ -37,13 +37,33 @@ func (p *Products) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.Method == http.MethodPost{
+		p.addProduct(rw, *r) // in tutorial it was just r instead of *r
+		return
+	}
+
 	rw.WriteHeader(http.StatusMethodNotAllowed)
 }
 
 func (p *Products) getProducts (rw http.ResponseWriter, r *http.Request) {
+	p.l.Println("GET Products activated")
 	listOfProducts := data.GetProducts()
 	err := listOfProducts.ToJSON(rw)
 	if err != nil {
 		http.Error(rw, "Unable to convert data to JSON", http.StatusInternalServerError)
 	}
+}
+
+func (p *Products) addProduct (rw http.ResponseWriter, r http.Request){
+	p.l.Println("POST Product activated")
+
+	product := &data.Product{}
+	err := product.FromJSON(r.Body)
+	if err != nil {
+		http.Error(rw, "can't decode data from JSON", http.StatusBadRequest)
+	}
+	p.l.Printf("Prod: %#v", product) //use %# for better representation than just %
+
+	// adding it to our fake database
+	data.AddProductToDatabase(product)
 }

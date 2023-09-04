@@ -21,9 +21,31 @@ type Product struct {
 // instead of json.Marshal we want to use this method instead
 type Products []*Product
 
-func (p *Products) ToJSON(w io.Writer) error { //name of function is ToJSON and it returns an error
+func (p *Products) ToJSON(w io.Writer) error { //name of function is ToJSON and it returns an error if found any issue
 	encoder := json.NewEncoder(w)
 	return encoder.Encode(p)
+}
+
+func (p *Product) FromJSON(r io.Reader) error {
+	decoder := json.NewDecoder(r)
+	return decoder.Decode(p)
+}
+
+
+// abstracting the products by a function
+func GetProducts() Products {
+	return productList
+}
+
+// this function will add the product we get from POST request to our fake database (productList)
+func AddProductToDatabase(p *Product){
+	p.ID = getIDForNewProduct()
+	productList = append(productList, p)
+}
+
+func getIDForNewProduct() int {
+	lastProduct := productList[len(productList)-1]
+	return lastProduct.ID + 1
 }
 
 
@@ -61,8 +83,3 @@ var productList = []*Product{
 }
 
 // productList is a slice of pointers to Product structs. 
-
-// abstracting the products by a function
-func GetProducts() Products {
-	return productList
-}
