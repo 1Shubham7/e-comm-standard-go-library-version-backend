@@ -4,6 +4,7 @@ import (
 	"time"
 	"encoding/json"
 	"io"
+	"fmt"
 )
 
 type Product struct {
@@ -37,7 +38,7 @@ func GetProducts() Products {
 	return productList
 }
 
-// this function will add the product we get from POST request to our fake database (productList)
+// POST - this function will add the product we get from POST request to our fake database (productList)
 func AddProductToDatabase(p *Product){
 	p.ID = getIDForNewProduct()
 	productList = append(productList, p)
@@ -46,6 +47,31 @@ func AddProductToDatabase(p *Product){
 func getIDForNewProduct() int {
 	lastProduct := productList[len(productList)-1]
 	return lastProduct.ID + 1
+}
+
+// PUT 
+
+func UpdateProduct(id int, p *Product) error {
+	_, position, err := findProductToUpdate(id)
+	if err != nil{
+		return err
+	}
+	p.ID = id
+	productList[position] = p
+
+	return nil
+}
+
+var ErrProductNotFound = fmt.Errorf("Product not found")
+
+func findProductToUpdate(id int) (*Product, int, error) { //takes id as input, gives three outputs
+	for i , p := range productList {
+		if p.ID == id {
+			return p, i, nil // return p and nil error
+		}
+	}
+
+	return nil, -1, ErrProductNotFound
 }
 
 
